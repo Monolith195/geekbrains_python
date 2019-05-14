@@ -2,14 +2,20 @@ import json
 import argparse
 from datetime import datetime
 from socket import *
+from lesson03.utils import receive_size
 
-parser = argparse.ArgumentParser()
-parser.add_argument('address', help='server\'s ip', type=str)
-parser.add_argument('port', default=7777, help='server\'s port, 7777 by default', nargs='?', type=int)
-args = parser.parse_args()
 
-s = socket(AF_INET, SOCK_STREAM)
-s.connect((args.address, args.port))
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('address', help='server\'s ip', type=str)
+    parser.add_argument('port', default=7777, help='server\'s port, 7777 by default', nargs='?', type=int)
+    return parser
+
+
+def create_connection(address, port):
+    s = socket(AF_INET, SOCK_STREAM)
+    s.connect((address, port))
+    return s
 
 
 def create_presence_msg() -> bytes:
@@ -27,11 +33,18 @@ def create_presence_msg() -> bytes:
     return msg_b
 
 
-def send_msg(msg_b) -> None:
+def send_msg(s, msg_b) -> None:
     s.send(msg_b)
 
 
-send_msg(create_presence_msg())
-data = s.recv(2000)
-print('Server message: ', data.decode('utf-8'))
-s.close()
+def main():
+    args = create_parser().parse_args()
+    s = create_connection(args.address, args.port)
+    send_msg(s, create_presence_msg())
+    data = s.recv(receive_size)
+    print('Server message: ', data.decode('utf-8'))
+    s.close()
+
+
+if __name__ == '__main__':
+    main()
