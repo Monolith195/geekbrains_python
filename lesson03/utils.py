@@ -1,10 +1,10 @@
 response_dict = {
-    'OK': {
+    "OK": {
         "response": 200,
     },
-    'Bad Request': {
-        'response': 400,
-        'error': 'Bad Request'
+    "Bad Request": {
+        "response": 400,
+        "error": 'Bad Request'
     }
 }
 
